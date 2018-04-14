@@ -8,3 +8,6 @@ Integrantes
 
 ## Codebeat
 [![codebeat badge](https://codebeat.co/badges/9b2dc661-1641-4ad2-97dd-39b40d9484d9)](https://codebeat.co/projects/github-com-rcalumno-visita-core-master)
+
+## travis CI
+[![Build Status](https://travis-ci.org/rcalumno/visita-core.svg?branch=master)](https://travis-ci.org/rcalumno/visita-core)
