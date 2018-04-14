@@ -1,6 +1,6 @@
 # _visita-core_
 ## _Proyecto para el curso de modelo de datos_
-###Integrantes
+Integrantes
 - Cristina Suarez
 - Veronica Vega
 - Hugo Bonini
