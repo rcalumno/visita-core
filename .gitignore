@@ -46,7 +46,8 @@ htmlcov/
 .cache
 .pytest_cache/
 nosetests.xml
-coverage.xml
+#Removido para la covertura
+#coverage.xml
 *.cover
 .hypothesis/
 
