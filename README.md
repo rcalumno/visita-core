@@ -19,5 +19,7 @@ Integrantes
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/aeff89f47acb40fb80eea98598c95fe7)](https://www.codacy.com/app/maniac787/visita-core?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rcalumno/visita-core&amp;utm_campaign=Badge_Coverage)
 
-## Instruccion Incompleta
+## snyk
+[![Known Vulnerabilities](https://snyk.io/test/github/rcalumno/visita-core/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/rcalumno/visita-core?targetFile=requirements.txt)
+## Instrucci&oacute;n Incompleta
 coverage run -m src.odd_number --source=_test_,src _test_/test_math.py
