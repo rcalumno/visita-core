@@ -22,4 +22,4 @@ Integrantes
 ## snyk
 [![Known Vulnerabilities](https://snyk.io/test/github/rcalumno/visita-core/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/rcalumno/visita-core?targetFile=requirements.txt)
 ## Instrucci&oacute;n Incompleta
-coverage run -m src.odd_number --source=_test_,src _test_/test_math.py
+coverage run -m src.odd_number --source=_test_,src _test_/test_math.py 
