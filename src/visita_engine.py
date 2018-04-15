@@ -16,6 +16,5 @@ class VisitaEngine:
         else:
             VisitaEngine.__instance = self
 
-
-    def leer_achivo(self):
-        print ("leyendo archivo")
+    def leer_achivo(self, ruta_documento):
+        print ("leyendo archivo {} ", ruta_documento)

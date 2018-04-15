@@ -26,4 +26,4 @@ class MathTestCase(unittest.TestCase):
         self.assertEquals(is_odd_number, False)
 
     def test_visita_engine(self):
-        VisitaEngine.getInstance().leer_achivo()
+        VisitaEngine.getInstance().leer_achivo("/usr/roberto")
