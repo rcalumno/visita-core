@@ -1,7 +1,8 @@
 import unittest
+
 from faker import Faker
 
-from src.main.odd_number import OddNumber
+from odd_number import OddNumber
 
 
 class MathTestCase(unittest.TestCase):
