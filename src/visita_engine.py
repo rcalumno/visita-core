@@ -20,6 +20,9 @@ class VisitaEngine:
             VisitaEngine.__instance = self
 
     def leer_achivo(self, ruta_documento):
+        if ruta_documento is None:
+            return ['test']
+
         print("leyendo archivo {} ", ruta_documento)
 
         excel_file = pd.ExcelFile(ruta_documento)
