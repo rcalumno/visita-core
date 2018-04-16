@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 class VisitaEngine:
     # Here will be the instance stored.
     __instance = None
@@ -17,4 +20,11 @@ class VisitaEngine:
             VisitaEngine.__instance = self
 
     def leer_achivo(self, ruta_documento):
-        print ("leyendo archivo {} ", ruta_documento)
+        print("leyendo archivo {} ", ruta_documento)
+
+        excel_file = pd.ExcelFile(ruta_documento)
+        hoja = excel_file._parse_excel("BITACORA")
+
+        for index, row in hoja.iterrows():
+            print(str(row[0]) + " - " + str(row[1]) + " - " + str(row[2]))
+        return excel_file.sheet_names

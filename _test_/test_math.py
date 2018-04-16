@@ -3,7 +3,6 @@ import unittest
 from faker import Faker
 
 from odd_number import OddNumber
-from visita_engine import VisitaEngine
 
 
 class MathTestCase(unittest.TestCase):
@@ -24,6 +23,3 @@ class MathTestCase(unittest.TestCase):
         test_number = self.fake.random_number() * 2 + 1
         is_odd_number = OddNumber.odd_number(test_number)
         self.assertEquals(is_odd_number, False)
-
-    def test_visita_engine(self):
-        VisitaEngine.getInstance().leer_achivo("/usr/roberto")
