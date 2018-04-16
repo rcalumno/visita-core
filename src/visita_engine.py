@@ -1,5 +1,7 @@
 import pandas as pd
 
+from visita_mongo_client import VisitaMongoClient
+
 
 class VisitaEngine:
     # Here will be the instance stored.
@@ -30,4 +32,13 @@ class VisitaEngine:
 
         for index, row in hoja.iterrows():
             print(str(row[0]) + " - " + str(row[1]) + " - " + str(row[2]))
+
+            doc = {
+                "ESPECIALISTA": row[5],
+                "FECHA": str(row[7]),
+                "HORA": str(row[8]),
+                # more fields
+            }
+
+            VisitaMongoClient.getInstance().insert(doc)
         return excel_file.sheet_names
