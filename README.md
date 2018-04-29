@@ -6,6 +6,23 @@ Integrantes
 - Hugo Bonini
 - Roberto Chasipanta
 
+## Instrucci&oacute;n necesaria para la covertura
+```commandline
+coverage run -m src.odd_number --source=_test_,src _test_/test_math.py 
+
+```
+
+
+##
+```commandline
+mongo --authenticationDatabase admin -u root -p
+
+db.createUser({
+    user: "roberto",
+    pwd: "admin",
+    roles: [ "readWrite", "dbAdmin" ]
+})
+```
 
 ## Codebeat
 [![codebeat badge](https://codebeat.co/badges/9b2dc661-1641-4ad2-97dd-39b40d9484d9)](https://codebeat.co/projects/github-com-rcalumno-visita-core-master)
@@ -21,5 +38,3 @@ Integrantes
 
 ## snyk
 [![Known Vulnerabilities](https://snyk.io/test/github/rcalumno/visita-core/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/rcalumno/visita-core?targetFile=requirements.txt)
-## Instrucci&oacute;n Incompleta
-coverage run -m src.odd_number --source=_test_,src _test_/test_math.py 
