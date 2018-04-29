@@ -7,7 +7,6 @@ class VisitaMongoClient:
 
     client.visita_db.authenticate('roberto', 'admin', mechanism='SCRAM-SHA-1')
 
-
     db = client['visita_db']
 
     def __init__(self):
