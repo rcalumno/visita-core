@@ -31,12 +31,12 @@ class VisitaEngine:
         hoja = excel_file._parse_excel("BITACORA")
 
         for index, row in hoja.iterrows():
-            print(str(row[0]) + " - " + str(row[1]) + " - " + str(row[2]))
+            print(str(row[5]) + " - " + str(row[7]) + " - " + str(row[8]))
 
             doc = {
                 "ESPECIALISTA": row[5],
-                "FECHA": str(row[7]),
-                "HORA": str(row[8]),
+                "FECHA": row[7],
+                "HORA": row[8],
                 # more fields
             }
 

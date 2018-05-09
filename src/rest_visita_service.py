@@ -28,7 +28,7 @@ def do_something(fileDto):
 
     print(fileDto)
 
-    VisitaEngine.getInstance()
+    VisitaEngine.getInstance().leer_achivo(fileDto.ruta)
     return "OK"
 
 

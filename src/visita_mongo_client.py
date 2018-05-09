@@ -3,9 +3,9 @@ from pymongo import MongoClient
 
 class VisitaMongoClient:
     __instance = None
-    client = MongoClient()
+    client = MongoClient("localhost", 27017)
 
-    client.visita_db.authenticate('roberto', 'admin', mechanism='SCRAM-SHA-1')
+    #client.visita_db.authenticate('roberto', 'admin', mechanism='SCRAM-SHA-1')
 
     db = client['visita_db']
 
@@ -24,6 +24,6 @@ class VisitaMongoClient:
 
     def insert(self, document):
 
-        coll = self.db['visita']
+        coll = self.db['visita_col']
         doc_id = coll.insert_one(document).inserted_id
         print(doc_id)
