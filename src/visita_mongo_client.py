@@ -5,7 +5,7 @@ class VisitaMongoClient:
     __instance = None
     client = MongoClient("localhost", 27017)
 
-    #client.visita_db.authenticate('roberto', 'admin', mechanism='SCRAM-SHA-1')
+    client.visita_db.authenticate('roberto', 'admin', mechanism='SCRAM-SHA-1')
 
     db = client['visita_db']
 

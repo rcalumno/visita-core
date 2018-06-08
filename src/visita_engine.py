@@ -28,16 +28,26 @@ class VisitaEngine:
         print("leyendo archivo {} ", ruta_documento)
 
         excel_file = pd.ExcelFile(ruta_documento)
-        hoja = excel_file._parse_excel("BITACORA")
+        hoja = excel_file._parse_excel("4TRIM")
 
         for index, row in hoja.iterrows():
-            print(str(row[5]) + " - " + str(row[7]) + " - " + str(row[8]))
+            print(str(row[0]) + " - " + str(row[1]) + " - " + str(row[9]))
 
             doc = {
-                "ESPECIALISTA": row[5],
-                "FECHA": row[7],
-                "HORA": row[8],
-                # more fields
+                "RUC": row[0],
+                "NOMBRE": row[1],
+                "TIPO_TRANSACCION": row[9],
+                "CONTEO_TRANSACCION": row[11],
+                "MONTO": row[12],
+                "COSTO": row[17],
+                "COMISION": row[18],
+                "RESULTADO": row[19],
+                "ZONA": row[3],
+                "PROVINCIA": row[4],
+                "CANTON": row[5],
+                "EJECUTIVO": row[15],
+                "SUPERVISOR": row[16],
+                "MES": row[14],
             }
 
             VisitaMongoClient.getInstance().insert(doc)
