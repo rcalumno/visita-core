@@ -24,6 +24,6 @@ class VisitaMongoClient:
 
     def insert(self, document):
 
-        coll = self.db['visita_col']
+        coll = self.db['cnb_fact']
         doc_id = coll.insert_one(document).inserted_id
         print(doc_id)

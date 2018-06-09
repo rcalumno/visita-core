@@ -6,7 +6,7 @@ from visita_engine import VisitaEngine
 
 app = Flask(__name__)
 
-FileDto = namedtuple('FileDto', 'filename filetype fileMonth value ruta')
+FileDto = namedtuple('FileDto', 'filename filetype fileMonth sheet value ruta ')
 
 
 def convert_input_to(class_):

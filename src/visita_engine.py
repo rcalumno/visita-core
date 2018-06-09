@@ -21,14 +21,14 @@ class VisitaEngine:
         else:
             VisitaEngine.__instance = self
 
-    def leer_achivo(self, ruta_documento):
+    def leer_achivo(self, ruta_documento, nombre_hoja):
         if ruta_documento is None:
             return ['test']
 
         print("leyendo archivo {} ", ruta_documento)
 
         excel_file = pd.ExcelFile(ruta_documento)
-        hoja = excel_file._parse_excel("4TRIM")
+        hoja = excel_file._parse_excel(nombre_hoja)
 
         for index, row in hoja.iterrows():
             print(str(row[0]) + " - " + str(row[1]) + " - " + str(row[9]))
