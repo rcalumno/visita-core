@@ -6,6 +6,19 @@ Integrantes
 - Hugo Bonini
 - Roberto Chasipanta
 
+## Creaci&oacute;n del ambiente virtual
+
+```commandline 
+python -m venv visita_core
+
+- windows /cmd
+visita_core\Scripts\activate.bat
+
+- unix
+source tutorial-env/bin/activate 
+```
+
+
 ## Instrucci&oacute;n necesaria para la covertura
 ```commandline
 coverage run -m src.odd_number --source=_test_,src _test_/test_math.py 
