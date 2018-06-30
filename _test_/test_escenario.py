@@ -77,18 +77,40 @@ class EscenarioTestCase(unittest.TestCase):
         print(conteo)
 
     def test_generar_escenario(self):
+        query = {}
+        query["$and"] = [
+            {
+                u"TIPO_TRANSACCION": u"RETIROS"
+            },
+            {
+                u"$or": [
+                    {
+                        u"MES": datetime.strptime("2017-01-31 19:00:00.000000", "%Y-%m-%d %H:%M:%S.%f").replace(
+                            tzinfo=FixedOffset(-300, "-0500"))
+                    },
+                    {
+                        u"MES": datetime.strptime("2016-12-31 19:00:00.000000", "%Y-%m-%d %H:%M:%S.%f").replace(
+                            tzinfo=FixedOffset(-300, "-0500"))
+                    }
+                ]
+            }
+        ]
+
         self.funcion_generica(['MES', 'NOMBRE', 'TIPO_TRANSACCION', 'MONTO'],
-                              "numero_transacciones_mes_ruc", {"RUC": Int64(100373885001)}, None)
-
-        self.funcion_generica(['NOMBRE', 'TIPO_TRANSACCION', 'MONTO'],
-                              "numero_transacciones_ruc_anio", {"RUC": Int64(100373885001)},
-                              [['MES', pymongo.ASCENDING], ['TIPO_TRANSACCION', pymongo.ASCENDING]])
-
-        self.funcion_generica(['PROVINCIA', 'MES', 'NOMBRE', 'TIPO_TRANSACCION', 'MONTO'],
-                              "numero_transacciones_provincia", {}, None)
+                              "numero_transacciones_mes_ruc",
+                              {"RUC": Int64(100373885001), "MES": datetime(2017, 1, 1, 0, 0, 0),
+                               "MES": datetime(2017, 2, 1, 0, 0, 0), "TIPO_TRANSACCION": "RETIROS"}, None, False)
 
 
-    def funcion_generica(self, columnas, tipo_escenario, filtrar_por, ordenar_por):
+
+        # self.funcion_generica(['NOMBRE', 'TIPO_TRANSACCION', 'MONTO'],
+        #                       "numero_transacciones_ruc_anio", {"RUC": Int64(100373885001)},
+        #                       [['MES', pymongo.ASCENDING], ['TIPO_TRANSACCION', pymongo.ASCENDING]])
+        #
+        # self.funcion_generica(['PROVINCIA', 'MES', 'NOMBRE', 'TIPO_TRANSACCION', 'MONTO'],
+        #                       "numero_transacciones_provincia", {}, None)
+
+    def funcion_generica(self, columnas, tipo_escenario, filtrar_por, ordenar_por, consolidar_mes):
         """
         Permite generar un escenario especifico en fncion a los parametros que pasamos al metodo
         :param columnas: Columnas sobre las cuales vamos a trabajar dentro del universo de datos en nuestra tabla de mongo
@@ -100,13 +122,21 @@ class EscenarioTestCase(unittest.TestCase):
         query = filtrar_por
 
         if "MES" in columnas:
-            for x in range(1, 12):
-                query["MES"] = datetime(2017, x, 1, 0, 0, 0)
-                file_name = "/home/roberto/salida_escenario/" + tipo_escenario + "_Mes_" + str(x) + ".csv"
+            if consolidar_mes:
+                for x in range(1, 12):
+                    query["MES"] = datetime(2017, x, 1, 0, 0, 0)
+                    file_name = "/home/roberto/salida_escenario/" + tipo_escenario + "_Mes_" + str(x) + ".csv"
+                    # informacion de la base
+                    cursor = self.collection.find(query)
+                    # data frame en pandas
+                    self.procesar_data_frame_pandas(columnas, cursor, file_name)
+            else:
+                file_name = "/home/roberto/salida_escenario/" + tipo_escenario + "_Mes_Consolidado.csv"
                 # informacion de la base
                 cursor = self.collection.find(query)
                 # data frame en pandas
                 self.procesar_data_frame_pandas(columnas, cursor, file_name)
+
         else:
 
             file_name = "/home/roberto/salida_escenario/" + tipo_escenario + ".csv"
@@ -115,7 +145,6 @@ class EscenarioTestCase(unittest.TestCase):
             cursor = self.collection.find(query).sort(ordenar_por)
             # data frame en pandas
             self.procesar_data_frame_pandas(columnas, cursor, file_name)
-
 
     def procesar_data_frame_pandas(self, columnas, cursor, file_name):
         """
@@ -127,15 +156,15 @@ class EscenarioTestCase(unittest.TestCase):
         """
         # data frame en pandas
         data = pd.DataFrame(list(cursor))
-        #Seleccionamos solo las columnas que necesitamos
+        # Seleccionamos solo las columnas que necesitamos
         data_filtrado = data[columnas]
 
         # print(data_filtrado)
         # agrupamos los elementos por el ultimo criterio
         conteo = data_filtrado.groupby(columnas[0:len(columnas) - 1]).count()
 
-        #Renombramos la ultima cabecera ya que toma el nombre de la columna en cuestion
+        # Renombramos la ultima cabecera ya que toma el nombre de la columna en cuestion
         conteo.rename(columns={columnas[len(columnas) - 1]: 'TOTAL'}, inplace=True)
         print(conteo)
         # Exportacion de los datos a csv
-        conteo.to_csv(file_name, sep='\t', encoding='utf-8')
+        conteo.transpose().to_csv(file_name, sep='\t', encoding='utf-8')
