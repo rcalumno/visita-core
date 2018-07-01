@@ -16,6 +16,15 @@ visita_core\Scripts\activate.bat
 
 - unix
 source tutorial-env/bin/activate 
+
+pip3 install -r requirements.txt
+ 
+En caso de exisitir un fallo de descarga de librebrias instalarlas nuevamente, generalmente
+	- pip3 install numpy
+	- pip3 install pandas
+ 
+Actualizar el archivo de dependencias
+pip3 freeze > requirements.txt
 ```
 
 
@@ -26,7 +35,7 @@ coverage run -m src.odd_number --source=_test_,src _test_/test_math.py
 ```
 
 
-##
+## Configuraci&oacute;n Mongo
 ```commandline
 mongo --authenticationDatabase admin -u root -p
 
@@ -35,6 +44,11 @@ db.createUser({
     pwd: "admin",
     roles: [ "readWrite", "dbAdmin" ]
 })
+
+- windows
+mongod --dbpath="D:\Software\Servers\mongodb\data\db"
+mongoimport --db visita_db --collection visita_col --type csv --file C:\Users\Roberto\Downloads\visita_db.visita_col.csv --headerline
+
 ```
 
 ## Codebeat
