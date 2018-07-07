@@ -29,11 +29,27 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             4, True
         )
         '''
-        filtro = {"RUC": Int64(100373885001), "TIPO_TRANSACCION": "Recargas"}
+        filtro = {"EJECUTIVO": "CAJAMARCA MIRANDA ANGEL HERIBERTO", "TIPO_TRANSACCION": "Recargas"}
         ordenacion = [(u"MES", 1), (u"TIPO_TRANSACCION", -1)]
-        columnas_accion = ['MES', 'MONTO']
+        columnas_accion = ['MES', 'COSTO']
         nombre_escenario = "escenario_1"
         agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
+        '''
+        self.generar_escenario_generico(
+            filtro,
+            ordenacion,
+            columnas_accion,
+            agrupar_por,
+            nombre_escenario,
+            4, True
+        )
+        '''
+
+        filtro = {"EJECUTIVO": "CAJAMARCA MIRANDA ANGEL HERIBERTO", "TIPO_TRANSACCION": "Recargas"}
+        ordenacion = [(u"MES", 1), (u"TIPO_TRANSACCION", -1)]
+        columnas_accion = ['MES', 'COSTO', 'MONTO']
+        nombre_escenario = "escenario_1"
+        agrupar_por = ["MES"]
 
         self.generar_escenario_generico(
             filtro,
