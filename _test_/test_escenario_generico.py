@@ -8,10 +8,10 @@ from pymongo import MongoClient
 
 class EscenarioGenericoTestCase(unittest.TestCase):
     client = MongoClient("mongodb://localhost:27017/")
-    # client.visita_db.authenticate('roberto', 'admin', mechanism='SCRAM-SHA-1')
+    client.visita_db.authenticate('roberto', 'admin', mechanism='SCRAM-SHA-1')
     database = client["visita_db"]
     collection = database["visita_col"]
-    directorio_base = "D:/home/"
+    directorio_base = "/home/roberto/salida_escenario/"
 
     def test_generar_escenario(self):
         filtro = {"RUC": Int64(100373885001), "TIPO_TRANSACCION": "Recargas"}
@@ -26,7 +26,7 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             columnas_accion,
             agrupar_por,
             nombre_escenario,
-            4, False
+            2, False
         )
 
         filtro = {"EJECUTIVO": "CAJAMARCA MIRANDA ANGEL HERIBERTO", "TIPO_TRANSACCION": "Recargas"}
@@ -35,15 +35,14 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         nombre_escenario = "escenario_2"
         agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
 
-        # self.generar_escenario_generico(
-        #     filtro,
-        #     ordenacion,
-        #     columnas_accion,
-        #     agrupar_por,
-        #     nombre_escenario,
-        #     4, True
-        # )
-
+        self.generar_escenario_generico(
+            filtro,
+            ordenacion,
+            columnas_accion,
+            agrupar_por,
+            nombre_escenario,
+            4, False
+        )
 
         filtro = {"RUC": Int64(100373885001), "TIPO_TRANSACCION": "Recargas"}
         ordenacion = [(u"MES", 1), (u"TIPO_TRANSACCION", -1)]
@@ -51,14 +50,14 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         nombre_escenario = "escenario_3"
         agrupar_por = None
 
-        # self.generar_escenario_generico(
-        #     filtro,
-        #     ordenacion,
-        #     columnas_accion,
-        #     agrupar_por,
-        #     nombre_escenario,
-        #     4, True
-        # )
+        self.generar_escenario_generico(
+            filtro,
+            ordenacion,
+            columnas_accion,
+            agrupar_por,
+            nombre_escenario,
+            4, True
+        )
 
     def generar_escenario_generico(self, filtrar_por, ordenar_por, columnas_accion, agrupar_por, nombre_escenario,
                                    meses_atras, borrar_na):
@@ -104,21 +103,19 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         columna_accion = self.obtenerUltimaColumna(proyeccion, -1)
         self.proyectar_datos(proyeccion, columna_accion, meses_atras, numero_filas, "A")
 
-        if numero_columnas > 2:
-            columna_accion2 = self.obtenerUltimaColumna(proyeccion, len(columnas) - 1)
-            # self.proyectar_datos(proyeccion, columna_accion2, meses_atras, numero_filas, "B")
-
-
+        # if numero_columnas > 2:
+        # columna_accion2 = self.obtenerUltimaColumna(proyeccion, len(columnas) - 1)
+        # self.proyectar_datos(proyeccion, columna_accion2, meses_atras, numero_filas, "B")
 
         print("\n\n###########################################################")
         print("DataFrame Resultante")
         if borrar_na:
-            proyeccion = proyeccion.dropna(inplace=True)
+            proyeccion.dropna(inplace=True)
         print(proyeccion)
         print("###########################################################")
 
         # Exportacion de los datos a csv
-        df_resultado.to_csv(file_name, sep='\t', encoding='utf-8')
+        df_resultado.dropna().to_csv(file_name, sep='\t', encoding='utf-8')
 
     def proyectar_datos(self, data_frame_tmp, columna_accion, meses_atras, numero_filas, prefijo):
         # Con esta instruccion tomamos los valores resultantes para poder proyectarlos
