@@ -16,9 +16,23 @@ class EscenarioGenericoTestCase(unittest.TestCase):
     def test_generar_escenario(self):
         filtro = {"RUC": Int64(100373885001), "TIPO_TRANSACCION": "Recargas"}
         ordenacion = [(u"MES", 1), (u"TIPO_TRANSACCION", -1)]
-        # columnas_accion = ['MES', 'NOMBRE', 'TIPO_TRANSACCION', 'MONTO']
         columnas_accion = ['MES', 'MONTO']
-        nombre_escenario = "numero_transacciones_mes_ruc"
+        nombre_escenario = "escenario_1"
+        agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
+        '''
+        self.generar_escenario_generico(
+            filtro,
+            ordenacion,
+            columnas_accion,
+            agrupar_por,
+            nombre_escenario,
+            4, True
+        )
+        '''
+        filtro = {"RUC": Int64(100373885001), "TIPO_TRANSACCION": "Recargas"}
+        ordenacion = [(u"MES", 1), (u"TIPO_TRANSACCION", -1)]
+        columnas_accion = ['MES', 'MONTO']
+        nombre_escenario = "escenario_1"
         agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
 
         self.generar_escenario_generico(
@@ -27,19 +41,20 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             columnas_accion,
             agrupar_por,
             nombre_escenario,
-            4
+            4, True
         )
 
-    def generar_escenario_generico(self, filtrar_por, ordenar_por, columnas_accion, agrupar_por, nombre_escenario, meses_atras):
+    def generar_escenario_generico(self, filtrar_por, ordenar_por, columnas_accion, agrupar_por, nombre_escenario,
+                                   meses_atras, borrar_na):
         query = filtrar_por
 
         file_name = self.directorio_base + nombre_escenario + ".csv"
         # informacion de la base
         cursor = self.collection.find(query, sort=ordenar_por)
         # data frame en pandas
-        self.procesar_data_frame_pandas(columnas_accion, cursor, agrupar_por, meses_atras, file_name)
+        self.procesar_data_frame_pandas(columnas_accion, cursor, agrupar_por, meses_atras, file_name, borrar_na)
 
-    def procesar_data_frame_pandas(self, columnas, cursor, agrupar_por, meses_atras, file_name):
+    def procesar_data_frame_pandas(self, columnas, cursor, agrupar_por, meses_atras, file_name, borrar_na):
         numero_columnas = len(columnas)
 
         # data frame en pandas
@@ -50,7 +65,6 @@ class EscenarioGenericoTestCase(unittest.TestCase):
 
         df_filtrado_columnas['MES'] = pd.to_datetime(df_filtrado_columnas['MES'])
 
-        # print(data_filtrado)
         df_resultado = df_filtrado_columnas
         if agrupar_por:
             # agrupamos los elementos por el ultimo criterio
@@ -60,6 +74,8 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             df_agrupado.rename(columns={columnas[len(columnas) - 1]: 'TOTAL'}, inplace=False)
 
             df_resultado = df_agrupado
+
+        print(df_resultado)
 
         # Convertimos la agrupacion en un dataframe
         proyeccion = pd.DataFrame(df_resultado)
@@ -88,6 +104,8 @@ class EscenarioGenericoTestCase(unittest.TestCase):
 
         print("\n\n###########################################################")
         print("DataFrame Resultante")
+        if borrar_na:
+            proyeccion.dropna(inplace=True)
         print(proyeccion)
         print("###########################################################")
 
