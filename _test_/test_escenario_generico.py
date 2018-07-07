@@ -19,46 +19,46 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         columnas_accion = ['MES', 'MONTO']
         nombre_escenario = "escenario_1"
         agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
-        '''
+
         self.generar_escenario_generico(
             filtro,
             ordenacion,
             columnas_accion,
             agrupar_por,
             nombre_escenario,
-            4, True
+            4, False
         )
-        '''
+
         filtro = {"EJECUTIVO": "CAJAMARCA MIRANDA ANGEL HERIBERTO", "TIPO_TRANSACCION": "Recargas"}
         ordenacion = [(u"MES", 1), (u"TIPO_TRANSACCION", -1)]
         columnas_accion = ['MES', 'COSTO']
-        nombre_escenario = "escenario_1"
+        nombre_escenario = "escenario_2"
         agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
-        '''
-        self.generar_escenario_generico(
-            filtro,
-            ordenacion,
-            columnas_accion,
-            agrupar_por,
-            nombre_escenario,
-            4, True
-        )
-        '''
 
-        filtro = {"EJECUTIVO": "CAJAMARCA MIRANDA ANGEL HERIBERTO", "TIPO_TRANSACCION": "Recargas"}
+        # self.generar_escenario_generico(
+        #     filtro,
+        #     ordenacion,
+        #     columnas_accion,
+        #     agrupar_por,
+        #     nombre_escenario,
+        #     4, True
+        # )
+
+
+        filtro = {"RUC": Int64(100373885001), "TIPO_TRANSACCION": "Recargas"}
         ordenacion = [(u"MES", 1), (u"TIPO_TRANSACCION", -1)]
-        columnas_accion = ['MES', 'COSTO', 'MONTO']
-        nombre_escenario = "escenario_1"
-        agrupar_por = ["MES"]
+        columnas_accion = ['MES', 'MONTO', 'RESULTADO']
+        nombre_escenario = "escenario_3"
+        agrupar_por = None
 
-        self.generar_escenario_generico(
-            filtro,
-            ordenacion,
-            columnas_accion,
-            agrupar_por,
-            nombre_escenario,
-            4, True
-        )
+        # self.generar_escenario_generico(
+        #     filtro,
+        #     ordenacion,
+        #     columnas_accion,
+        #     agrupar_por,
+        #     nombre_escenario,
+        #     4, True
+        # )
 
     def generar_escenario_generico(self, filtrar_por, ordenar_por, columnas_accion, agrupar_por, nombre_escenario,
                                    meses_atras, borrar_na):
@@ -102,10 +102,30 @@ class EscenarioGenericoTestCase(unittest.TestCase):
 
         # Con esta instruccion tomamos los valores resultantes para poder proyectarlos
         columna_accion = self.obtenerUltimaColumna(proyeccion, -1)
+        self.proyectar_datos(proyeccion, columna_accion, meses_atras, numero_filas, "A")
+
+        if numero_columnas > 2:
+            columna_accion2 = self.obtenerUltimaColumna(proyeccion, len(columnas) - 1)
+            # self.proyectar_datos(proyeccion, columna_accion2, meses_atras, numero_filas, "B")
+
+
+
+        print("\n\n###########################################################")
+        print("DataFrame Resultante")
+        if borrar_na:
+            proyeccion = proyeccion.dropna(inplace=True)
+        print(proyeccion)
+        print("###########################################################")
+
+        # Exportacion de los datos a csv
+        df_resultado.to_csv(file_name, sep='\t', encoding='utf-8')
+
+    def proyectar_datos(self, data_frame_tmp, columna_accion, meses_atras, numero_filas, prefijo):
+        # Con esta instruccion tomamos los valores resultantes para poder proyectarlos
         print("Columna de accion  :" + str(columna_accion))
 
         for x_meses in range(meses_atras, 0, -1):
-            nombre = "COL-" + str(x_meses)
+            nombre = prefijo + "-COL-" + str(x_meses)
 
             columnas_insercion = np.array([])
             elementos_iterados: int = 0
@@ -116,17 +136,7 @@ class EscenarioGenericoTestCase(unittest.TestCase):
                     columnas_insercion = np.append(columnas_insercion, [pd.np.nan])
                     elementos_iterados += 1
 
-            proyeccion.insert(loc=(meses_atras - x_meses), column=nombre, value=columnas_insercion)
-
-        print("\n\n###########################################################")
-        print("DataFrame Resultante")
-        if borrar_na:
-            proyeccion.dropna(inplace=True)
-        print(proyeccion)
-        print("###########################################################")
-
-        # Exportacion de los datos a csv
-        df_resultado.to_csv(file_name, sep='\t', encoding='utf-8')
+            data_frame_tmp.insert(loc=(meses_atras - x_meses), column=nombre, value=columnas_insercion)
 
     def obtenerUltimaColumna(self, data_frame_tmp, columna):
         return pd.Series(data_frame_tmp.values[:, columna], name=data_frame_tmp.columns[columna]).values
