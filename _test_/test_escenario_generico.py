@@ -20,16 +20,17 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         columnas_accion = ['MES', 'MONTO']
         nombre_escenario = "numero_transacciones_mes_ruc"
         agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
-        self.funcion_generica(
+
+        self.generar_escenario_generico(
             filtro,
             ordenacion,
             columnas_accion,
             agrupar_por,
             nombre_escenario,
-            2
+            4
         )
 
-    def funcion_generica(self, filtrar_por, ordenar_por, columnas_accion, agrupar_por, nombre_escenario, meses_atras):
+    def generar_escenario_generico(self, filtrar_por, ordenar_por, columnas_accion, agrupar_por, nombre_escenario, meses_atras):
         query = filtrar_por
 
         file_name = self.directorio_base + nombre_escenario + ".csv"
@@ -59,13 +60,15 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             df_agrupado.rename(columns={columnas[len(columnas) - 1]: 'TOTAL'}, inplace=False)
 
             df_resultado = df_agrupado
-            # print(df_resultado)
 
+        # Convertimos la agrupacion en un dataframe
         proyeccion = pd.DataFrame(df_resultado)
 
         numero_filas = proyeccion.shape[0]
         print("Numero de filas    : " + str(numero_filas))
         print("Numero de columnas : " + str(numero_columnas))
+
+        # Con esta instruccion tomamos los valores resultantes para poder proyectarlos
         columna_accion = self.obtenerUltimaColumna(proyeccion, -1)
         print("Columna de accion  :" + str(columna_accion))
 
@@ -73,18 +76,15 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             nombre = "COL-" + str(x_meses)
 
             columnas_insercion = np.array([])
-
+            elementos_iterados: int = 0
             for y_elementos in range(0, numero_filas):
-                if y_elementos < meses_atras - 1:
-                    columnas_insercion = np.append(columnas_insercion, [pd.np.nan])
+                if y_elementos > (x_meses - 1):
+                    columnas_insercion = np.append(columnas_insercion, columna_accion[y_elementos - elementos_iterados])
                 else:
-                    columnas_insercion = np.append(columnas_insercion, columna_accion[y_elementos])
-            print(columnas_insercion)
+                    columnas_insercion = np.append(columnas_insercion, [pd.np.nan])
+                    elementos_iterados += 1
 
             proyeccion.insert(loc=(meses_atras - x_meses), column=nombre, value=columnas_insercion)
-
-        # for x in range(0, meses_atras):
-        #     proyeccion.loc[:, 'COL-' + str(1)] = [1, 2, 3, 4, 6, 7, 8, 9]
 
         print("\n\n###########################################################")
         print("DataFrame Resultante")
