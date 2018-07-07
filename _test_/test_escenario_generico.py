@@ -19,6 +19,9 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         columnas_accion = ['MES', 'MONTO']
         nombre_escenario = "escenario_1"
         agrupar_por = columnas_accion[0:len(columnas_accion) - 1]
+        meses_atras = 4
+        borrar_nan = False
+
 
         self.generar_escenario_generico(
             filtro,
@@ -26,7 +29,8 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             columnas_accion,
             agrupar_por,
             nombre_escenario,
-            2, False
+            meses_atras,
+            borrar_nan
         )
 
         filtro = {"EJECUTIVO": "CAJAMARCA MIRANDA ANGEL HERIBERTO", "TIPO_TRANSACCION": "Recargas"}
@@ -41,7 +45,8 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             columnas_accion,
             agrupar_por,
             nombre_escenario,
-            4, False
+            meses_atras,
+            borrar_nan
         )
 
         filtro = {"RUC": Int64(100373885001), "TIPO_TRANSACCION": "Recargas"}
@@ -56,11 +61,23 @@ class EscenarioGenericoTestCase(unittest.TestCase):
             columnas_accion,
             agrupar_por,
             nombre_escenario,
-            4, True
+            meses_atras,
+            borrar_nan
         )
 
     def generar_escenario_generico(self, filtrar_por, ordenar_por, columnas_accion, agrupar_por, nombre_escenario,
                                    meses_atras, borrar_na):
+        '''
+        Metodo de entrada inicial con el cual generaremos los escenarios, extrayendo los datos de la base de datos
+        :param filtrar_por:
+        :param ordenar_por:
+        :param columnas_accion:
+        :param agrupar_por:
+        :param nombre_escenario:
+        :param meses_atras:
+        :param borrar_na:
+        :return:
+        '''
         query = filtrar_por
 
         file_name = self.directorio_base + nombre_escenario + ".csv"
@@ -70,6 +87,16 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         self.procesar_data_frame_pandas(columnas_accion, cursor, agrupar_por, meses_atras, file_name, borrar_na)
 
     def procesar_data_frame_pandas(self, columnas, cursor, agrupar_por, meses_atras, file_name, borrar_na):
+        '''
+        Una vez que contemos con la fuente de datos extraida de mongo, debemos transformar la tupla en dataframes de pandas
+        :param columnas:
+        :param cursor:
+        :param agrupar_por:
+        :param meses_atras:
+        :param file_name:
+        :param borrar_na:
+        :return:
+        '''
         numero_columnas = len(columnas)
 
         # data frame en pandas
@@ -78,9 +105,10 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         # Seleccionamos solo las columnas que necesitamos
         df_filtrado_columnas = df_base[columnas]
 
-        df_filtrado_columnas['MES'] = pd.to_datetime(df_filtrado_columnas['MES'])
+        # df_filtrado_columnas.loc[:, 'MES'] = pd.to_datetime(df_filtrado_columnas['MES'])
 
         df_resultado = df_filtrado_columnas
+
         if agrupar_por:
             # agrupamos los elementos por el ultimo criterio
             df_agrupado = df_filtrado_columnas.groupby(agrupar_por).count()
@@ -115,9 +143,18 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         print("###########################################################")
 
         # Exportacion de los datos a csv
-        df_resultado.dropna().to_csv(file_name, sep='\t', encoding='utf-8')
+        df_resultado.dropna().to_csv(file_name, sep=',', encoding='utf-8')
 
     def proyectar_datos(self, data_frame_tmp, columna_accion, meses_atras, numero_filas, prefijo):
+        '''
+        Metodo para generar las columnas de reresion
+        :param data_frame_tmp:
+        :param columna_accion:
+        :param meses_atras:
+        :param numero_filas:
+        :param prefijo:
+        :return:
+        '''
         # Con esta instruccion tomamos los valores resultantes para poder proyectarlos
         print("Columna de accion  :" + str(columna_accion))
 
@@ -135,5 +172,13 @@ class EscenarioGenericoTestCase(unittest.TestCase):
 
             data_frame_tmp.insert(loc=(meses_atras - x_meses), column=nombre, value=columnas_insercion)
 
+        return data_frame_tmp
+
     def obtenerUltimaColumna(self, data_frame_tmp, columna):
+        '''
+        Retorna la fila requerica para poder insertarla
+        :param data_frame_tmp:
+        :param columna:
+        :return:
+        '''
         return pd.Series(data_frame_tmp.values[:, columna], name=data_frame_tmp.columns[columna]).values
