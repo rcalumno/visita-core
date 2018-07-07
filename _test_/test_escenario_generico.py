@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 import pandas as pd
 from bson.int64 import Int64
 from pymongo import MongoClient
@@ -38,8 +39,11 @@ class EscenarioGenericoTestCase(unittest.TestCase):
         self.procesar_data_frame_pandas(columnas_accion, cursor, agrupar_por, meses_atras, file_name)
 
     def procesar_data_frame_pandas(self, columnas, cursor, agrupar_por, meses_atras, file_name):
+        numero_columnas = len(columnas)
+
         # data frame en pandas
         df_base = pd.DataFrame(list(cursor))
+
         # Seleccionamos solo las columnas que necesitamos
         df_filtrado_columnas = df_base[columnas]
 
@@ -59,21 +63,36 @@ class EscenarioGenericoTestCase(unittest.TestCase):
 
         proyeccion = pd.DataFrame(df_resultado)
 
-        for x in range(0, meses_atras):
-            nombre = "COL-" + str(meses_atras-x)
-            proyeccion.insert(loc=x, column=nombre, value=pd.np.nan)
+        numero_filas = proyeccion.shape[0]
+        print("Numero de filas    : " + str(numero_filas))
+        print("Numero de columnas : " + str(numero_columnas))
+        columna_accion = self.obtenerUltimaColumna(proyeccion, -1)
+        print("Columna de accion  :" + str(columna_accion))
 
-        # print(proyeccion)
+        for x_meses in range(meses_atras, 0, -1):
+            nombre = "COL-" + str(x_meses)
 
-        for x in range(0, meses_atras):
-            proyeccion.loc[:,'COL-'+str(1)]=[1, 2, 3, 4, 6, 7, 8, 9]
+            columnas_insercion = np.array([])
 
+            for y_elementos in range(0, numero_filas):
+                if y_elementos < meses_atras - 1:
+                    columnas_insercion = np.append(columnas_insercion, [pd.np.nan])
+                else:
+                    columnas_insercion = np.append(columnas_insercion, columna_accion[y_elementos])
+            print(columnas_insercion)
+
+            proyeccion.insert(loc=(meses_atras - x_meses), column=nombre, value=columnas_insercion)
+
+        # for x in range(0, meses_atras):
+        #     proyeccion.loc[:, 'COL-' + str(1)] = [1, 2, 3, 4, 6, 7, 8, 9]
+
+        print("\n\n###########################################################")
+        print("DataFrame Resultante")
         print(proyeccion)
-                # for index, row in df_resultado.iteritems():
-        #     print(row.values)
-
-
-
+        print("###########################################################")
 
         # Exportacion de los datos a csv
-        # df_resultado.transpose().to_csv(file_name, sep='\t', encoding='utf-8')
+        df_resultado.to_csv(file_name, sep='\t', encoding='utf-8')
+
+    def obtenerUltimaColumna(self, data_frame_tmp, columna):
+        return pd.Series(data_frame_tmp.values[:, columna], name=data_frame_tmp.columns[columna]).values
