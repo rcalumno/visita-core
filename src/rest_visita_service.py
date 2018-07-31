@@ -5,6 +5,7 @@ from flask import Flask, abort, request
 from visita_engine import VisitaEngine
 
 app = Flask(__name__)
+app.config['DEBUG']=True
 
 FileDto = namedtuple('FileDto', 'filename filetype fileMonth sheet value ruta ')
 
