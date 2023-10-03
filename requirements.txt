@@ -30,7 +30,7 @@ six==1.11.0
 termstyle==0.1.11
 text-unidecode==1.2
 typed-ast==1.1.0
-urllib3==1.26.5
+urllib3==1.26.17
 Werkzeug==0.14.1
 wrapt==1.10.11
 xlrd==1.1.0
